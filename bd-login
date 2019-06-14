@@ -1,0 +1,77 @@
+# coding=utf-8
+from selenium import webdriver
+import time
+import os
+
+username = ''
+password = ''
+
+opt = webdriver.ChromeOptions()
+
+# True：无界面模式 False：有界面
+opt.headless = False
+browser = webdriver.Chrome(options=opt)
+
+login_url = '/v2/?login'
+
+# 登录成功后需要跳转的首页
+index_url = ''
+
+browser.get(login_url)
+toggle_input = browser.find_element_by_id('TANGRAM__PSP_3__footerULoginBtn')
+toggle_input.click()
+
+time.sleep(0.5)
+
+user_input = browser.find_element_by_id('TANGRAM__PSP_3__userName')
+pass_input = browser.find_element_by_id('TANGRAM__PSP_3__password')
+submit_input = browser.find_element_by_id('TANGRAM__PSP_3__submit')
+
+if user_input and pass_input and submit_input:
+    user_input.send_keys(username)
+    pass_input.send_keys(password)
+
+    time.sleep(2)
+
+    submit_input.click()
+
+    time.sleep(2)
+
+    try:
+        code_input = browser.find_element_by_id('TANGRAM__22__button_send_mobile')
+    except:
+        code_input = False
+
+    if code_input:
+        print('code input')
+        for x in range(5):
+            current = 22 + x
+            print(current)
+            close_input = browser.find_element_by_id('TANGRAM__' + str(current) + '__header_a')
+            close_input.click()
+            submit_input.click()
+            time.sleep(2)
+
+            try:
+                code_input = browser.find_element_by_id('TANGRAM__' + str(current) + '__button_send_mobile')
+            except:
+                code_input = False
+            if code_input:
+                print('code input')
+            else:
+                break
+
+time.sleep(2)
+browser.get(index_url)
+
+cookies = browser.get_cookies()
+cookie_dict = {}
+for cookie in cookies:
+    cookie_dict[cookie['name']] = cookie['value']
+
+print(cookie_dict)
+dirname = os.getcwd()
+f = open(dirname + './cookie.txt', 'w')
+f.write(str(cookie_dict))
+f.close
+browser.close()
