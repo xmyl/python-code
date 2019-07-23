@@ -1,2 +1,2 @@
-# website-login
-网站登录脚本
+# Python练习
+Python相关代码
